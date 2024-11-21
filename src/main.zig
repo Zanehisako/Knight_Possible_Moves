@@ -12,7 +12,6 @@ pub const Node = struct {
     }
 };
 pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !void {
-pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !void {
     if (nodes_visited.put()) {
         //possible moves are [-17,-15,-10,-6,+6,+10,+15,+17]
         if (node.value - 17 > 0) {
