@@ -12,11 +12,13 @@ pub const Node = struct {
     }
 };
 pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !void {
+pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !void {
     if (nodes_visited.put()) {
         //possible moves are [-17,-15,-10,-6,+6,+10,+15,+17]
         if (node.value - 17 > 0) {
             const child_node = Node.init(node.value - 17, null);
             node.children.?.append(child_node);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
             GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value - 15 > 0) {
@@ -24,35 +26,42 @@ pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !v
             node.children.?.append();
             node.children.?.append(child_node);
             GenerateAllNodesRecursive(child_node, nodes_visited);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value - 10 > 0) {
             const child_node = Node.init(node.value - 10, null);
             node.children.?.append(child_node);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
             GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value - 6 > 0) {
             const child_node = Node.init(node.value - 6, null);
             node.children.?.append(child_node);
             GenerateAllNodesRecursive(child_node, nodes_visited);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value + 6 > 0) {
             const child_node = Node.init(node.value + 6, null);
             node.children.?.append(child_node);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
             GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value + 10 > 0) {
             const child_node = Node.init(node.value + 10, null);
             node.children.?.append(child_node);
             GenerateAllNodesRecursive(child_node, nodes_visited);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value + 15 > 0) {
             const child_node = Node.init(node.value + 15, null);
             node.children.?.append(child_node);
             GenerateAllNodesRecursive(child_node, nodes_visited);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
         }
         if (node.value + 17 > 0) {
             const child_node = Node.init(node.value + 17, null);
             node.children.?.append(child_node);
+            GenerateAllNodesRecursive(child_node, nodes_visited);
             GenerateAllNodesRecursive(child_node, nodes_visited);
         }
     } else {
