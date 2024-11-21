@@ -1,72 +1,17 @@
 const std = @import("std");
 
 pub const Node = struct {
-    value: u8,
-    children: ?std.ArrayList(*Node),
+    value: i8,
+    allocator: std.heap.page_allocator,
+    children: std.BoundedArray(Node, 6),
 
-    pub fn init(value: u8) Node {
+    pub fn init(value: i8, len: usize) Node {
         return Node{
             .value = value,
-            .children = null,
+            .children = std.BoundedArray(Node).init(len),
         };
     }
 };
-pub fn GenerateAllNodesRecursive(node: *Node, nodes_visited: std.AutoHashMap) !void {
-    if (nodes_visited.put()) {
-        //possible moves are [-17,-15,-10,-6,+6,+10,+15,+17]
-        if (node.value - 17 > 0) {
-            const child_node = Node.init(node.value - 17, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value - 15 > 0) {
-            const child_node = Node.init(node.value - 15, null);
-            node.children.?.append();
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value - 10 > 0) {
-            const child_node = Node.init(node.value - 10, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value - 6 > 0) {
-            const child_node = Node.init(node.value - 6, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value + 6 > 0) {
-            const child_node = Node.init(node.value + 6, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value + 10 > 0) {
-            const child_node = Node.init(node.value + 10, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value + 15 > 0) {
-            const child_node = Node.init(node.value + 15, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-        if (node.value + 17 > 0) {
-            const child_node = Node.init(node.value + 17, null);
-            node.children.?.append(child_node);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-            GenerateAllNodesRecursive(child_node, nodes_visited);
-        }
-    } else {
-        return node;
-    }
-}
 
 pub fn GenerateAllNodesIterative(node: *Node) !void {
     var queue = std.DoublyLinkedList(*Node){};
@@ -74,15 +19,16 @@ pub fn GenerateAllNodesIterative(node: *Node) !void {
     queue.append(&list_node);
     var current_node: *Node = node;
     while (queue.len != 0) {
+        current_node = queue.first.?.data;
+        //possible moves are [-17,-15,-10,-6,+6,+10,+15,+17]
         std.debug.print("node value is :{any}", .{node.*.value});
-        if (current_node.*.value + 17 > 0) {
-            var child_node_up_right = Node.init(current_node.value + 17);
-            var child_node_up_left = Node.init(current_node.value + 10);
-            var child_node_down_right = Node.init(current_node.value - 17);
-            var child_node_down_left = Node.init(current_node.value - 10);
+        if (current_node.*.value - 17 > 0 and current_node.*.value < 64) {
+            var child_node_up_left = Node.init(current_node.value + 17, std.heap.page_allocator);
+            current_node.*.children.?.append(&child_node_up_left) catch |err| {
+                std.debug.print("{any} happend when trying to append childern to a node\n", .{err});
+            };
             var new_node = std.DoublyLinkedList(*Node).Node{ .data = &child_node_up_left };
             queue.append(&new_node);
-            current_node = &child_node_up_left;
         }
         const head = queue.popFirst();
         std.debug.print("Head :{any}", .{head.?.data.*.value});
@@ -108,8 +54,8 @@ pub fn main() !void {
         };
         i += 1;
     }
-    std.debug.print("nigga", .{});
-    var node = Node.init(5);
+    std.debug.print("nigga\n", .{});
+    var node = Node.init(63);
     GenerateAllNodesIterative(&node) catch |err| {
         std.debug.print("{any}", .{err});
     };
