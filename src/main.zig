@@ -76,10 +76,13 @@ pub fn GenerateAllNodesIterative(node: *Node) !void {
     while (queue.len != 0) {
         std.debug.print("node value is :{any}", .{node.*.value});
         if (current_node.*.value + 17 > 0) {
-            var child_node = Node.init(current_node.value + 17);
-            var new_node = std.DoublyLinkedList(*Node).Node{ .data = &child_node };
+            var child_node_up_right = Node.init(current_node.value + 17);
+            var child_node_up_left = Node.init(current_node.value + 10);
+            var child_node_down_right = Node.init(current_node.value - 17);
+            var child_node_down_left = Node.init(current_node.value - 10);
+            var new_node = std.DoublyLinkedList(*Node).Node{ .data = &child_node_up_left };
             queue.append(&new_node);
-            current_node = &child_node;
+            current_node = &child_node_up_left;
         }
         const head = queue.popFirst();
         std.debug.print("Head :{any}", .{head.?.data.*.value});
